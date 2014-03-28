@@ -1,5 +1,5 @@
 /*
- * Firecat v1.6
+ * Firecat
  * Copyright (C) 2008-2011 Stach & Liu LLC
  * 
  * Firecat allows you to punch reverse TCP tunnels out of a compromised host,
