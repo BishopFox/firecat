@@ -236,7 +236,7 @@ int do_consultant(const int tunnelPort, const int servicePort) {
  */
 int do_target(const char *consultantHost, const char *targetHost, const int tunnelPort, const int servicePort) {
 	int tunnelSock, serviceSock;
-	char buf[BUF_SIZE], *p;
+	char buf[BUF_SIZE];
 	
 	// connect to the consultant's host
 	printf("Target: Establishing tunnel with remote host on %s:%d\n", consultantHost, tunnelPort);
