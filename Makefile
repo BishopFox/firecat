@@ -1,5 +1,5 @@
 all:
-	gcc -Wall firecat.c -o firecat
+	gcc -Wall -Werror -ansi -pedantic firecat.c -o firecat
 
 clean:
 	rm -f firecat
