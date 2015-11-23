@@ -69,13 +69,13 @@ extern int optind, opterr, optopt;
 
 char *cmdshell = NULL; /* from nc111nt. see doexec stuff, below. */
 
-const char *usageString1 = "FireCat v"VERSION" - Copyright 2008-2011 Stach & Liu\n\n" \
+const char *usageString1 = "FireCat v"VERSION" - original code Copyright 2008-2011 Stach & Liu\n\n" \
         "Usage: firecat -m <mode> [options]\n\n" \
         "  -m <mode>       0 = consultant, 1 = target\n\n" \
         "In consultant mode:\n\n" \
         "  -t <port>       Wait for incoming connections from target on this port\n" \
         "  -s <port>       Wait for incoming connections from you on this port\n" \
-        "                  Connections to this port will be forwarded over tunnel\n\n";
+        "                  Connections to this port will be forwarded over tunnel\n";
 const char *usageString2 = "In target mode:\n\n" \
         "  -h <host>       Connect back to <host> (your IP)\n" \
         "  -t <port>       Connect back to TCP <port> on <host>\n" \
@@ -83,7 +83,7 @@ const char *usageString2 = "In target mode:\n\n" \
         "                  Default: localhost\n"
         "  -e              Throw a connect-back shell to <host>:<port> on your box\n" \
             "       or\n" \
-            "  -s <port>       Create a tunnel to <target>:<port> inside the target network\n\n";
+            "  -s <port>       Create a tunnel to <target>:<port> inside the target network\n";
 
 void usage() {
     puts(usageString1); /* broke it in half for strings under 509 */
