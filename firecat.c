@@ -857,7 +857,7 @@ static VOID SessionWriteShellThreadFn(LPVOID Parameter) {
  * fake varargs -- need to do this way because we wind up calling through
  * more levels of indirection than vanilla varargs can handle, and not all
  * machines have vfprintf/vsyslog/whatever!  6 params oughta be enough.
- * */
+ */
 void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *p6) {
     fprintf(stderr, str, p1, p2, p3, p4, p5, p6);
 
@@ -867,9 +867,12 @@ void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *
 #else
     if (errno) {		/* this gives funny-looking messages, but */
         perror(" ");		/* it's more portable than sys_errlist[]... */
-    }				/* xxx: do something better.  */
-    /* yyy: did something worse. */
-    /* zzz: what is this shit */
+    }				/* XXX: do something better.  */
+    /* YYY: did something worse. */
+    /* ZZZ: what is this shit */
+    /* TODO: played it fast and loose with the Windows string table, may as well do the same for UNIX
+     * Better than nothing \b
+     */
 #endif
     else
         fprintf(stderr, "\n");
