@@ -870,9 +870,7 @@ void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *
     }				/* XXX: do something better.  */
     /* YYY: did something worse. */
     /* ZZZ: what is this shit */
-    /* TODO: played it fast and loose with the Windows string table, may as well do the same for UNIX
-     * Better than nothing \b
-     */
+    /* TODO: oh god, this is __win32__ but not WIN32 */
 #endif
     else
         fprintf(stderr, "\n");
@@ -885,58 +883,58 @@ void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *
 */
 char *winsockstr(int error) {
     switch (error) {
-        case WSAEINTR          : return("INTR          ");
-        case WSAEBADF          : return("BADF          ");
-        case WSAEACCES         : return("ACCES         ");
-        case WSAEFAULT         : return("FAULT         ");
-        case WSAEINVAL         : return("INVAL         ");
-        case WSAEMFILE         : return("MFILE         ");
-        case WSAEWOULDBLOCK    : return("WOULDBLOCK    ");
-        case WSAEINPROGRESS    : return("INPROGRESS    ");
-        case WSAEALREADY       : return("ALREADY       ");
-        case WSAENOTSOCK       : return("NOTSOCK       ");
-        case WSAEDESTADDRREQ   : return("DESTADDRREQ   ");
-        case WSAEMSGSIZE       : return("MSGSIZE       ");
-        case WSAEPROTOTYPE     : return("PROTOTYPE     ");
-        case WSAENOPROTOOPT    : return("NOPROTOOPT    ");
-        case WSAEPROTONOSUPPORT: return("PROTONOSUPPORT");
-        case WSAESOCKTNOSUPPORT: return("SOCKTNOSUPPORT");
-        case WSAEOPNOTSUPP     : return("OPNOTSUPP     ");
-        case WSAEPFNOSUPPORT   : return("PFNOSUPPORT   ");
-        case WSAEAFNOSUPPORT   : return("AFNOSUPPORT   ");
-        case WSAEADDRINUSE     : return("ADDRINUSE     ");
-        case WSAEADDRNOTAVAIL  : return("ADDRNOTAVAIL  ");
-        case WSAENETDOWN       : return("NETDOWN       ");
-        case WSAENETUNREACH    : return("NETUNREACH    ");
-        case WSAENETRESET      : return("NETRESET      ");
-        case WSAECONNABORTED   : return("CONNABORTED   ");
-        case WSAECONNRESET     : return("CONNRESET     ");
-        case WSAENOBUFS        : return("NOBUFS        ");
-        case WSAEISCONN        : return("ISCONN        ");
-        case WSAENOTCONN       : return("NOTCONN       ");
-        case WSAESHUTDOWN      : return("SHUTDOWN      ");
-        case WSAETOOMANYREFS   : return("TOOMANYREFS   ");
-        case WSAETIMEDOUT      : return("TIMEDOUT      ");
-        case WSAECONNREFUSED   : return("connection refused");
-        case WSAELOOP          : return("LOOP          ");
-        case WSAENAMETOOLONG   : return("NAMETOOLONG   ");
-        case WSAEHOSTDOWN      : return("HOSTDOWN      ");
-        case WSAEHOSTUNREACH   : return("HOSTUNREACH   ");
-        case WSAENOTEMPTY      : return("NOTEMPTY      ");
-        case WSAEPROCLIM       : return("PROCLIM       ");
-        case WSAEUSERS         : return("USERS         ");
-        case WSAEDQUOT         : return("DQUOT         ");
-        case WSAESTALE         : return("STALE         ");
-        case WSAEREMOTE        : return("REMOTE        ");
-        case WSAEDISCON        : return("DISCON        ");
-        case WSASYSNOTREADY    : return("SYSNOTREADY    ");
-        case WSAVERNOTSUPPORTED: return("VERNOTSUPPORTED");
-        case WSANOTINITIALISED : return("NOTINITIALISED ");
-        case WSAHOST_NOT_FOUND : return("HOST_NOT_FOUND ");
-        case WSATRY_AGAIN      : return("TRY_AGAIN      ");
-        case WSANO_RECOVERY    : return("NO_RECOVERY    ");
-        case WSANO_DATA        : return("NO_DATA        ");
-        default : return("unknown socket error");
+        case WSAECONNREFUSED   : return "Connection Refused";
+        case WSAEINTR          : return "INTR";
+        case WSAEBADF          : return "BADF";
+        case WSAEACCES         : return "ACCES";
+        case WSAEFAULT         : return "FAULT";
+        case WSAEINVAL         : return "INVAL";
+        case WSAEMFILE         : return "MFILE";
+        case WSAEWOULDBLOCK    : return "WOULDBLOCK";
+        case WSAEINPROGRESS    : return "INPROGRESS";
+        case WSAEALREADY       : return "ALREADY";
+        case WSAENOTSOCK       : return "NOTSOCK";
+        case WSAEDESTADDRREQ   : return "DESTADDRREQ";
+        case WSAEMSGSIZE       : return "MSGSIZE";
+        case WSAEPROTOTYPE     : return "PROTOTYPE";
+        case WSAENOPROTOOPT    : return "NOPROTOOPT";
+        case WSAEPROTONOSUPPORT: return "PROTONOSUPPORT";
+        case WSAESOCKTNOSUPPORT: return "SOCKTNOSUPPORT";
+        case WSAEOPNOTSUPP     : return "OPNOTSUPP";
+        case WSAEPFNOSUPPORT   : return "PFNOSUPPORT";
+        case WSAEAFNOSUPPORT   : return "AFNOSUPPORT";
+        case WSAEADDRINUSE     : return "ADDRINUSE";
+        case WSAEADDRNOTAVAIL  : return "ADDRNOTAVAIL";
+        case WSAENETDOWN       : return "NETDOWN";
+        case WSAENETUNREACH    : return "NETUNREACH";
+        case WSAENETRESET      : return "NETRESET";
+        case WSAECONNABORTED   : return "CONNABORTED";
+        case WSAECONNRESET     : return "CONNRESET";
+        case WSAENOBUFS        : return "NOBUFS";
+        case WSAEISCONN        : return "ISCONN";
+        case WSAENOTCONN       : return "NOTCONN";
+        case WSAESHUTDOWN      : return "SHUTDOWN";
+        case WSAETOOMANYREFS   : return "TOOMANYREFS";
+        case WSAETIMEDOUT      : return "TIMEDOUT";
+        case WSAELOOP          : return "LOOP";
+        case WSAENAMETOOLONG   : return "NAMETOOLONG";
+        case WSAEHOSTDOWN      : return "HOSTDOWN";
+        case WSAEHOSTUNREACH   : return "HOSTUNREACH";
+        case WSAENOTEMPTY      : return "NOTEMPTY";
+        case WSAEPROCLIM       : return "PROCLIM";
+        case WSAEUSERS         : return "USERS";
+        case WSAEDQUOT         : return "DQUOT";
+        case WSAESTALE         : return "STALE";
+        case WSAEREMOTE        : return "REMOTE";
+        case WSAEDISCON        : return "DISCON";
+        case WSASYSNOTREADY    : return "SYSNOTREADY";
+        case WSAVERNOTSUPPORTED: return "VERNOTSUPPORTED";
+        case WSANOTINITIALISED : return "NOTINITIALISED";
+        case WSAHOST_NOT_FOUND : return "HOST_NOT_FOUND";
+        case WSATRY_AGAIN      : return "TRY_AGAIN";
+        case WSANO_RECOVERY    : return "NO_RECOVERY";
+        case WSANO_DATA        : return "NO_DATA";
+        default                : return "Unknown Socket Error";
     }
 }
 #endif
