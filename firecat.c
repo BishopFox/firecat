@@ -865,16 +865,11 @@ void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *
     if (h_errno)
         fprintf(stderr, ": %s\n", winsockstr(h_errno));
 #else
-    if (errno) {		/* this gives funny-looking messages, but */
-        perror(" ");		/* it's more portable than sys_errlist[]... */
-    }				/* XXX: do something better.  */
-    /* YYY: did something worse. */
-    /* ZZZ: what is this shit */
-    /* TODO: oh god, this is __win32__ but not WIN32 */
+    if (errno)
+        fprintf(stderr, ": %s\n", winsockstr(errno)); /* maybe they'll line up? */
 #endif
     else
         fprintf(stderr, "\n");
-    fflush(stderr);
 }
 
 /* winsockstr
