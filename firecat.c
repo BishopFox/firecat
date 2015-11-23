@@ -866,7 +866,7 @@ void holler (char *str, char *p1, char *p2, char *p3, char *p4, char *p5, char *
         fprintf(stderr, ": %s\n", winsockstr(h_errno));
 #else
     if (errno)
-        fprintf(stderr, ": %s\n", winsockstr(errno)); /* maybe they'll line up? */
+        fprintf(stderr, ": %d\n", errno);
 #endif
     else
         fprintf(stderr, "\n");
