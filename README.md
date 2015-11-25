@@ -8,4 +8,4 @@ Code cleanup, C practice with networking, and portability
 TODOs
 -----
 * Fix that GOTO
-* Fix UNIX error string table avoidance
+* Fix WIN32 error string table avoidance
