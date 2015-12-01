@@ -558,6 +558,7 @@ static PSESSION_DATA CreateSession() {
 
     /* Allocate space for the session data */
     Session = (PSESSION_DATA) malloc(sizeof(SESSION_DATA));
+    
     if (!Session) {
         return NULL;
     }
@@ -577,7 +578,8 @@ static PSESSION_DATA CreateSession() {
     if (!Result) {
         holler("Failed to create shell stdout pipe, error = %s",
                 itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
-        goto Failure;
+        CreateSessionFailure(Session, ShellStdinPipe, ShellStdoutPipe);
+        return NULL;
     }
     Result = CreatePipe(&ShellStdinPipe, &Session->WritePipeHandle,
             &SecurityAttributes, 0);
@@ -585,7 +587,8 @@ static PSESSION_DATA CreateSession() {
     if (!Result) {
         holler("Failed to create shell stdin pipe, error = %s",  
                 itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
-        goto Failure;
+        CreateSessionFailure(Session, ShellStdinPipe, ShellStdoutPipe);
+        return NULL;
     }
     
     /* Start the shell */
@@ -602,7 +605,8 @@ static PSESSION_DATA CreateSession() {
         holler("Failed to execute shell", NULL,
                 NULL, NULL, NULL, NULL, NULL);
 
-        goto Failure;
+        CreateSessionFailure(Session, ShellStdinPipe, ShellStdoutPipe);
+        return NULL;
     }
 
     /* The session is not connected, initialize variables to indicate that */
@@ -610,12 +614,15 @@ static PSESSION_DATA CreateSession() {
 
     /* Success, return the session pointer as a handle */
     return Session;
+}
 
-Failure: /* WHO TOLD US WE COULD USE GOTOS */
-
-    /* We get here for any failure case.
-     * Free up any resources and exit
-     */
+/* CreateSessionFailure
+ * We get here for any failure case.
+ * Free up any resources and exit
+ */
+static void CreateSessionFailure(PSESSION_DATA Session,
+                                 HANDLE ShellStdinPipe,
+                                 HANDLE ShellStdoutPipe) {
     if (ShellStdinPipe != NULL) 
         CloseHandle(ShellStdinPipe);
     if (ShellStdoutPipe != NULL) 
@@ -626,8 +633,6 @@ Failure: /* WHO TOLD US WE COULD USE GOTOS */
         CloseHandle(Session->WritePipeHandle);
 
     free(Session);
-
-    return NULL;
 }
 
 BOOL doexec(SOCKET  ClientSocket) {
