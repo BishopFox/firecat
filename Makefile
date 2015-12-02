@@ -1,6 +1,8 @@
 CC=gcc
 #CC=clang
 
+# With -Os, gcc makes a slightly smaller binary (18K vs 19K)
+
 make:
 	$(CC) -Wall -Werror -ansi -pedantic -g firecat.c -o firecat
 prod:
